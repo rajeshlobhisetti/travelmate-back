@@ -15,7 +15,11 @@ const adminRoutes = require('./routes/adminRoutes');
 const app = express();
 
 const PORT = process.env.PORT || 4000;
-const CLIENT_ORIGIN = process.env.CLIENT_ORIGIN || 'http://localhost:5173';
+const allowedOrigins = [
+  'http://localhost:5173',
+  'https://travelmate-front-gray.vercel.app',
+  'https://travelmate-front-up4x.vercel.app'
+];
 
 app.use(morgan('dev'));
 app.use(express.json());
@@ -23,8 +27,19 @@ app.use(cookieParser());
 app.set('trust proxy', 1);
 
 app.use(cors({
-  origin: CLIENT_ORIGIN,
-  credentials: true
+  origin: function (origin, callback) {
+    // Allow requests with no origin (like mobile apps, curl, etc.)
+    if (!origin) return callback(null, true);
+    
+    if (allowedOrigins.indexOf(origin) === -1) {
+      const msg = 'The CORS policy for this site does not allow access from the specified Origin.';
+      return callback(new Error(msg), false);
+    }
+    return callback(null, true);
+  },
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
 }));
 
 app.use(
@@ -35,11 +50,15 @@ app.use(
     saveUninitialized: false,
     cookie: {
       httpOnly: true,
-      secure: false,
-      sameSite: 'lax',
-      maxAge: 1000 * 60 * 60 * 24 * 7
+      secure: process.env.NODE_ENV === 'production', // Use secure cookies in production (HTTPS)
+      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax', // Required for cross-site cookies
+      maxAge: 1000 * 60 * 60 * 24 * 7,
+      domain: process.env.NODE_ENV === 'production' ? '.vercel.app' : undefined // Set domain in production
     },
-    store: MongoStore.create({ mongoUrl: MONGO_URI })
+    store: MongoStore.create({ 
+      mongoUrl: MONGO_URI,
+      ttl: 7 * 24 * 60 * 60 // 7 days in seconds
+    })
   })
 );
 
