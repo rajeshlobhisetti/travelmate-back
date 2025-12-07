@@ -3,6 +3,7 @@ services:
     name: travelmate-backend
     env: node
     buildCommand: |
+      npm install -g prisma
       npm install
       npm run build
     startCommand: npm start
