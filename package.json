@@ -19,11 +19,12 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "nodemon src/index.js",
-    "start": "node src/index.js",
+    "start": "node -r dotenv/config src/index.js",
+    "build": "prisma generate && prisma db push",
     "prisma:generate": "prisma generate",
     "prisma:push": "prisma db push",
     "prisma:studio": "prisma studio",
-    "seed": "node src/seed.js"
+    "seed": "node -r dotenv/config src/seed.js"
   },
   "keywords": [],
   "author": "",

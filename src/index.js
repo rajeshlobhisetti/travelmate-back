@@ -16,11 +16,7 @@ const app = express();
 
 const PORT = process.env.PORT || 4000;
 const allowedOrigins = [
-  'http://localhost:5173',
-  'https://travelmate-front-gray.vercel.app',
-  'https://travelmate-front-up4x.vercel.app',
-  'https://travelmate-backend-8w3t.onrender.com',
-  'https://travelmate-backend-8w3t.onrender.com/'
+  'http://localhost:5173'  // Only allow local frontend
 ];
 
 app.use(morgan('dev'));
@@ -52,15 +48,11 @@ app.use(
     saveUninitialized: false,
     cookie: {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production', // Use secure cookies in production (HTTPS)
-      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax', // Required for cross-site cookies
-      maxAge: 1000 * 60 * 60 * 24 * 7,
-      domain: process.env.NODE_ENV === 'production' ? '.vercel.app' : undefined // Set domain in production
+      secure: false, // Not using HTTPS in local development
+      sameSite: 'lax',
+      maxAge: 1000 * 60 * 60 * 24 * 7 // 7 days
     },
-    store: MongoStore.create({ 
-      mongoUrl: MONGO_URI,
-      ttl: 7 * 24 * 60 * 60 // 7 days in seconds
-    })
+    store: MongoStore.create({ mongoUrl: MONGO_URI })
   })
 );
 

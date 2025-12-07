@@ -1,0 +1,22 @@
+services:
+  - type: web
+    name: travelmate-backend
+    env: node
+    buildCommand: |
+      npm install
+      npx prisma generate
+      npx prisma db push
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+      - key: MONGODB_URI
+        sync: false
+      - key: SESSION_SECRET
+        generateValue: true
+      - key: CLIENT_ORIGIN
+        value: https://your-frontend-url.onrender.com  # Update this after frontend deployment
+      - key: NODE_OPTIONS
+        value: --max-old-space-size=1024
