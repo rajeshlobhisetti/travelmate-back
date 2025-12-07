@@ -18,7 +18,9 @@ const PORT = process.env.PORT || 4000;
 const allowedOrigins = [
   'http://localhost:5173',
   'https://travelmate-front-gray.vercel.app',
-  'https://travelmate-front-up4x.vercel.app'
+  'https://travelmate-front-up4x.vercel.app',
+  'https://travelmate-backend-8w3t.onrender.com',
+  'https://travelmate-backend-8w3t.onrender.com/'
 ];
 
 app.use(morgan('dev'));
